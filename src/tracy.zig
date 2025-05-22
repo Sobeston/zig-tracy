@@ -313,6 +313,7 @@ pub const TracingAllocator = struct {
             .vtable = &.{
                 .alloc = alloc,
                 .resize = resize,
+                .remap = std.mem.Allocator.noRemap,
                 .free = free,
             },
         };
@@ -321,7 +322,7 @@ pub const TracingAllocator = struct {
     fn alloc(
         ctx: *anyopaque,
         len: usize,
-        ptr_align: u8,
+        ptr_align: std.mem.Alignment,
         ret_addr: usize,
     ) ?[*]u8 {
         const self: *Self = @ptrCast(@alignCast(ctx));
@@ -340,7 +341,7 @@ pub const TracingAllocator = struct {
     fn resize(
         ctx: *anyopaque,
         buf: []u8,
-        buf_align: u8,
+        buf_align: std.mem.Alignment,
         new_len: usize,
         ret_addr: usize,
     ) bool {
@@ -364,7 +365,7 @@ pub const TracingAllocator = struct {
     fn free(
         ctx: *anyopaque,
         buf: []u8,
-        buf_align: u8,
+        buf_align: std.mem.Alignment,
         ret_addr: usize,
     ) void {
         const self: *Self = @ptrCast(@alignCast(ctx));
